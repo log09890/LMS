@@ -83,7 +83,7 @@ Cấu hình AI (Tùy chọn):
 
 Để dùng AI Local: Cài đặt Ollama và chạy ollama run llama3.
 
-Để dùng Cloud: Đăng ký API Key tại Google AI Studio.
+Để dùng Cloud: Đăng ký API Key
 
 Chạy ứng dụng:
 
