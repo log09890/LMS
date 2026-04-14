@@ -1,8 +1,10 @@
+import os
 from app import create_app
 
-# Gunicorn sẽ nhìn vào biến app này để chạy
+# Khởi tạo app từ folder 'app'
 app = create_app()
 
 if __name__ == '__main__':
-
-    app.run(debug=False)
+    # Chỉ dùng khi chạy máy cá nhân
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
