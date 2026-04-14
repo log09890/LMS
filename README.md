@@ -8,7 +8,7 @@ A comprehensive, AI-integrated academic management portal tailored for students 
 
 ## Key Features
 
-### Next-Gen Dashboard (Bento Grid)
+### Next-Gen Dashboard
 
 * Digital Student ID: Secure, personalized identification card with QR integration.
 
