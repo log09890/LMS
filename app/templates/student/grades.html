@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Kết quả học tập{% endblock %}
+
+{% block head %}
+<style>
+    .grade-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: none;
+    }
+    .grade-card-header {
+        background-color: white;
+        border-bottom: 1px solid #f0f2f5;
+        padding: 15px 25px;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .table-grades th {
+        background-color: var(--neu-blue) !important;
+        color: white !important;
+        font-weight: 600;
+        vertical-align: middle;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+
+    .table-grades td {
+        vertical-align: middle;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+
+    /* ĐỊNH DẠNG DÀNH RIÊNG CHO BẢN IN (KHI BẤM NÚT IN BẢNG ĐIỂM) */
+    @media print {
+        @page { size: A4 portrait; margin: 15mm; }
+        body { background: white !important; font-family: 'Times New Roman', serif; }
+
+        /* Ẩn toàn bộ các thành phần Web không cần thiết */
+        .sidebar, .top-navbar, .floating-panel-btn, .breadcrumb-nav, footer, .btn-print, .grade-card-header {
+            display: none !important;
+        }
+
+        /* Reset margin để in full giấy */
+        .main-content { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
+        .main-wrapper { padding: 0 !important; }
+        .grade-card { box-shadow: none !important; border: none !important; }
+
+        /* Chỉnh lại bảng cho bản in */
+        .table-grades th { background-color: #f8f9fa !important; color: black !important; -webkit-print-color-adjust: exact; border: 1px solid #000 !important; }
+        .table-grades td { border: 1px solid #000 !important; color: black !important; }
+
+        /* Hiển thị tiêu đề chuẩn của bản in */
+        .print-header { display: block !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-nav mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h4 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-chart-line me-2"></i> Kết quả học tập</h4>
+    </div>
+    <!-- NÚT IN BẢNG ĐIỂM -->
+    <button onclick="window.print()" class="btn btn-primary btn-print px-4 fw-bold shadow-sm">
+        <i class="fa-solid fa-print me-2"></i>In bảng điểm
+    </button>
+</div>
+
+<div class="card grade-card">
+
+    <!-- KHUNG TIÊU ĐỀ ẨN (CHỈ HIỆN KHI IN MÁY IN) -->
+    <div class="print-header d-none mt-2 mb-4">
+        <div class="row text-center mb-4">
+            <div class="col-6">
+                <p class="mb-0 fs-6">BỘ GIÁO DỤC VÀ ĐÀO TẠO</p>
+                <h6 class="fw-bold fs-5 mb-0">TRƯỜNG ĐH KINH TẾ QUỐC DÂN</h6>
+                <hr style="width: 40%; margin: 5px auto; border-top: 1.5px solid black; opacity: 1;">
+            </div>
+            <div class="col-6">
+                <h6 class="fw-bold mb-0 fs-5">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h6>
+                <p class="fw-bold mb-0">Độc lập - Tự do - Hạnh phúc</p>
+                <hr style="width: 40%; margin: 5px auto; border-top: 1.5px solid black; opacity: 1;">
+            </div>
+        </div>
+
+        <div class="text-center mt-5 mb-4">
+            <h4 class="fw-bold text-uppercase">BẢNG ĐIỂM SINH VIÊN</h4>
+        </div>
+
+        <div class="row mb-3" style="font-size: 1.1rem;">
+            <div class="col-7">
+                <p class="mb-2">Họ và tên sinh viên: <strong class="ms-2">{{ session.get('user_name', 'Sinh viên') }}</strong></p>
+                <p class="mb-2">Mã sinh viên: <strong class="ms-2">{{ session.get('student_id', '') }}</strong></p>
+            </div>
+            <div class="col-5">
+                <p class="mb-2">Hệ đào tạo: <strong class="ms-2">Chính quy</strong></p>
+                <p class="mb-2">Cơ sở: <strong class="ms-2">Trần Đại Nghĩa</strong></p>
+            </div>
+        </div>
+    </div>
+    <!-- KẾT THÚC KHUNG TIÊU ĐỀ ẨN -->
+
+    <!-- BẢNG ĐIỂM CHI TIẾT -->
+    <div class="card-body p-0 p-print-0 mt-3 mt-print-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-grades mb-0">
+                <thead>
+                    <tr>
+                        <th width="5%">STT</th>
+                        <th width="12%">Mã học phần</th>
+                        <th width="30%" class="text-start">Tên học phần</th>
+                        <th width="8%">STC</th>
+                        <th width="9%">Điểm CC</th>
+                        <th width="9%">Điểm thi</th>
+                        <th width="9%">TK (10)</th>
+                        <th width="9%">TK (CH)</th>
+                        <th width="9%">TK (4)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in enrollments %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <!-- Hiển thị unique_id làm mã môn -->
+                        <td class="text-muted">{{ e.section_info.subject_info.unique_id if e.section_info else 'N/A' }}</td>
+                        <td class="text-start fw-bold">{{ e.section_info.subject_info.ten_mon if e.section_info else 'N/A' }}</td>
+                        <td>{{ e.section_info.subject_info.so_tin_chi if e.section_info else '0' }}</td>
+
+                        <!-- Điểm chuyên cần (CC), Điểm thi, Hệ 10 -->
+                        <td>{{ e.diem_chuyen_can if e.diem_chuyen_can else '-' }}</td>
+                        <td>{{ e.diem_cuoi_ky if e.diem_cuoi_ky else '-' }}</td>
+                        <td class="fw-bold text-primary">{{ e.diem_he_10 if e.diem_he_10 > 0 else '-' }}</td>
+
+                        <!-- Quy đổi Điểm Chữ (CH) -->
+                        <td class="fw-bold">
+                            {% if e.diem_he_10 %}
+                                {% if e.diem_he_10 >= 8.5 %} <span class="text-success">A</span>
+                                {% elif e.diem_he_10 >= 7.0 %} <span class="text-info">B</span>
+                                {% elif e.diem_he_10 >= 5.5 %} <span class="text-warning">C</span>
+                                {% elif e.diem_he_10 >= 4.0 %} <span class="text-secondary">D</span>
+                                {% elif e.diem_he_10 > 0 %} <span class="text-danger">F</span>
+                                {% else %} - {% endif %}
+                            {% else %} - {% endif %}
+                        </td>
+
+                        <!-- Quy đổi Hệ 4 -->
+                        <td class="fw-bold">
+                            {% if e.diem_he_10 %}
+                                {% if e.diem_he_10 >= 8.5 %} 4.0
+                                {% elif e.diem_he_10 >= 7.0 %} 3.0
+                                {% elif e.diem_he_10 >= 5.5 %} 2.0
+                                {% elif e.diem_he_10 >= 4.0 %} 1.0
+                                {% elif e.diem_he_10 > 0 %} 0.0
+                                {% else %} - {% endif %}
+                            {% else %} - {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">Chưa có dữ liệu điểm tích lũy.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- DÒNG TỔNG KẾT BÊN DƯỚI -->
+        <div class="row mt-4 px-4 pb-4">
+            <div class="col-md-6 text-md-start text-center mb-3 mb-md-0">
+                <p class="mb-1 text-muted">Tổng số tín chỉ tích lũy:</p>
+                <h4 class="fw-bold text-dark">{{ tong_tin_chi }}</h4>
+            </div>
+            <div class="col-md-6 text-md-end text-center">
+                <p class="mb-1 text-muted">Điểm trung bình tích lũy (Hệ 10):</p>
+                <h4 class="fw-bold" style="color: var(--neu-blue);">{{ gpa }}</h4>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Trang chủ</li>
+{% endblock %}
+
+{% block head %}
+<style>
+    /* Card Khung viền chung */
+    .dashboard-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: none;
+    }
+    .dashboard-card-header {
+        background-color: white;
+        border-bottom: 1px solid #f0f2f5;
+        padding: 15px 25px;
+        border-radius: 10px 10px 0 0;
+        font-weight: 700;
+        color: var(--neu-blue);
+        text-transform: uppercase;
+        font-size: 1rem;
+    }
+
+    /* LƯỚI LỊCH HỌC (CSS GRID 7 CỘT) */
+    .schedule-container { overflow-x: auto; padding: 20px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; min-width: 1200px; }
+    .calendar-day { background-color: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; display: flex; flex-direction: column; min-height: 65vh; }
+    .day-header { text-align: center; padding: 12px 5px; font-weight: 700; color: #495057; background-color: white; border-bottom: 2px solid #e9ecef; border-radius: 8px 8px 0 0; font-size: 0.95rem; }
+    .calendar-day:nth-child(6) .day-header, .calendar-day:nth-child(7) .day-header { color: var(--neu-red); }
+    .day-content { padding: 10px; flex: 1; }
+
+    /* THẺ MÔN HỌC (CLASS CARD) */
+    .class-card { background: white; border-radius: 6px; padding: 15px 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 12px; border-left: 5px solid var(--neu-blue); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .class-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .class-title { font-weight: 700; color: var(--neu-blue); font-size: 0.95rem; margin-bottom: 10px; line-height: 1.3; }
+    .class-info { font-size: 0.85rem; color: #555; margin-bottom: 4px; display: flex; align-items: flex-start; }
+    .class-info i { width: 16px; color: #888; margin-top: 2px; }
+
+    /* Phối màu viền thẻ */
+    .color-1 { border-left-color: #0d6efd; } .color-2 { border-left-color: #198754; } .color-3 { border-left-color: #dc3545; } .color-4 { border-left-color: #fd7e14; } .color-5 { border-left-color: #6f42c1; }
+
+    /* NÚT NGĂN KÉO THÒ THỤT BÊN PHẢI */
+    .floating-panel-btn { position: fixed; right: 0; top: 50%; transform: translateY(-50%); background-color: var(--neu-blue); color: white; padding: 15px 10px; border-radius: 8px 0 0 8px; cursor: pointer; z-index: 1040; box-shadow: -2px 0 8px rgba(0,0,0,0.2); writing-mode: vertical-rl; text-orientation: mixed; font-weight: bold; letter-spacing: 1px; transition: 0.3s; }
+    .floating-panel-btn:hover { background-color: #003d75; padding-right: 15px; }
+
+    /* OFFCANVAS (PANEL BÊN PHẢI) */
+    .offcanvas-end { width: 400px !important; border-left: none; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+    .offcanvas-header { background-color: var(--neu-blue); color: white; }
+    .offcanvas-header .btn-close { filter: invert(1); }
+    .custom-tabs .nav-link { color: #666; font-weight: 600; border: none; border-bottom: 2px solid transparent; padding: 10px 15px; font-size: 0.9rem; }
+    .custom-tabs .nav-link.active { color: var(--neu-blue); border-bottom: 2px solid var(--neu-blue); background: transparent; }
+    .info-list-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; }
+
+    /* CSS BIỂU ĐỒ TRÒN (CIRCULAR PROGRESS) */
+    .circular-chart { display: block; margin: 0 auto; max-width: 130px; max-height: 130px; }
+    .circle-bg { fill: none; stroke: #f0f2f5; stroke-width: 2.5; }
+    .circle { fill: none; stroke-width: 2.5; stroke-linecap: round; animation: progress 1s ease-out forwards; }
+    @keyframes progress { 0% { stroke-dasharray: 0 100; } }
+    .circular-chart.primary .circle { stroke: var(--neu-blue); }
+    .circular-chart.success .circle { stroke: #28a745; }
+    .gpa-text { fill: #333; font-family: 'Segoe UI', sans-serif; font-size: 0.7rem; font-weight: 700; text-anchor: middle; }
+    .gpa-sub { fill: #888; font-family: 'Segoe UI', sans-serif; font-size: 0.25rem; font-weight: 600; text-anchor: middle; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4 d-flex justify-content-between align-items-center">
+    <div class="col-md-8">
+        <h4 class="fw-bold" style="color: var(--neu-blue);">Xin chào, {{ student.ten }}!</h4>
+        <p class="text-muted mb-0">Học kỳ 1 - Năm học 2026-2027</p>
+    </div>
+</div>
+
+<!-- NÚT GỌI NGĂN KÉO BÊN PHẢI -->
+<div class="floating-panel-btn" data-bs-toggle="offcanvas" data-bs-target="#studyPanel" title="Mở tiến độ học tập">
+    <i class="fa-solid fa-angle-left mb-2"></i> TIẾN ĐỘ HỌC TẬP
+</div>
+
+<!-- GIAO DIỆN LỊCH HỌC DẠNG LƯỚI (GRID) -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa-regular fa-calendar-days me-2"></i> Lịch học trong tuần</span>
+                <div>
+                    <button class="btn btn-sm border bg-light text-muted me-1"><i class="fa-solid fa-angle-left"></i> Trở về</button>
+                    <button class="btn btn-sm border bg-light text-muted">Tiếp <i class="fa-solid fa-angle-right"></i></button>
+                    <button class="btn btn-sm btn-primary ms-2 px-3">Hiện tại</button>
+                </div>
+            </div>
+
+            <div class="schedule-container">
+                <div class="calendar-grid">
+                    {% for day in range(2, 9) %}
+                    <div class="calendar-day">
+                        <div class="day-header">
+                            {% if day == 8 %}Chủ nhật{% else %}Thứ {{ day }}{% endif %}
+                        </div>
+                        <div class="day-content">
+                            {% set ns = namespace(has_class=false) %}
+                            {% for schedule, section, subject in schedules %}
+                                {% if schedule.thu|int == day %}
+                                    {% set ns.has_class = true %}
+                                    <div class="class-card color-{{ (loop.index % 5) + 1 }}"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#classDetailModal"
+                                         data-subject="{{ subject.ten_mon }}"
+                                         data-section="{{ section.section_id }}"
+                                         data-room="{{ schedule.phong_hoc }}"
+                                         data-teacher="{{ section.giang_vien }}"
+                                         data-time="Thứ {{ schedule.thu }}, Tiết {{ schedule.tiet_bat_dau }} - {{ schedule.tiet_ket_thuc }}">
+                                        <div class="class-title">{{ subject.ten_mon }}</div>
+                                        <div class="class-info">
+                                            <i class="fa-regular fa-clock"></i> Tiết: {{ schedule.tiet_bat_dau }} - {{ schedule.tiet_ket_thuc }}
+                                        </div>
+                                        <div class="class-info">
+                                            <i class="fa-solid fa-location-dot"></i> P.Học: <span class="fw-bold">{{ schedule.phong_hoc }}</span>
+                                        </div>
+                                        <div class="class-info">
+                                            <i class="fa-solid fa-barcode"></i> LHP: {{ section.section_id }}
+                                        </div>
+                                        <div class="class-info text-truncate" title="{{ section.giang_vien }}">
+                                            <i class="fa-solid fa-user-tie"></i> CBGD: {{ section.giang_vien }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if not ns.has_class %}
+                                <div class="text-center text-muted mt-5" style="font-size: 0.8rem; opacity: 0.4;">
+                                    <i class="fa-solid fa-mug-hot fa-2x mb-2"></i><br>Không có lịch
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- NGĂN KÉO BÊN PHẢI (OFFCANVAS) CHỨA THÔNG TIN ĐIỂM -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="studyPanel" aria-labelledby="studyPanelLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title fw-bold" id="studyPanelLabel"><i class="fa-solid fa-chart-pie me-2"></i>Tiến độ học tập</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0" style="background-color: #f8f9fa;">
+
+        <!-- Tab Học phí & Tín chỉ -->
+        <div class="bg-white p-3 mb-2 border-bottom">
+            <h6 class="fw-bold text-muted text-uppercase mb-3" style="font-size: 0.85rem;">Tiến độ & Chứng từ</h6>
+            <ul class="nav custom-tabs nav-justified mb-2" id="studyTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#trong-ky" type="button">Trong kỳ</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#toan-khoa" type="button">Toàn khóa</button></li>
+            </ul>
+
+            <div class="tab-content mt-3" id="studyTabsContent">
+                <div class="tab-pane fade show active" id="trong-ky">
+                    <div class="info-list-item">
+                        <span class="text-muted">Học phần đăng ký</span>
+                        <span class="fw-bold fs-5 text-dark">{{ schedules|length }}</span>
+                    </div>
+                    <div class="info-list-item border-0">
+                        <span class="text-muted">Tình trạng học phí</span>
+                        {% if tuition %}
+                            {% set no_hoc_phi = tuition.tong_tien - tuition.tien_da_nop %}
+                            {% if no_hoc_phi > 0 %}
+                                <span class="badge bg-danger rounded-pill px-3 py-2">Còn nợ</span>
+                            {% else %}
+                                <span class="badge bg-success rounded-pill px-3 py-2">Hoàn thành</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="badge bg-secondary rounded-pill px-3 py-2">N/A</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- SƠ ĐỒ THANH TIẾN TRÌNH TÍN CHỈ -->
+                <div class="tab-pane fade" id="toan-khoa">
+                    <div class="info-list-item border-0 pb-1">
+                        <span class="text-muted">Tín chỉ tích lũy</span>
+                        <span class="fw-bold fs-5 text-dark">{{ tong_tin_chi }} <span class="fs-6 text-muted">/ 138</span></span>
+                    </div>
+                    {% set phan_tram_tc = (tong_tin_chi / 138 * 100) | round(1) %}
+                    <div class="progress mb-2" style="height: 12px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ phan_tram_tc }}%;" aria-valuenow="{{ tong_tin_chi }}" aria-valuemin="0" aria-valuemax="138"></div>
+                    </div>
+                    <p class="text-end text-muted mb-0" style="font-size: 0.8rem; font-weight: 500;">Tiến độ hoàn thành: {{ phan_tram_tc }}%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Kết quả Điểm & Nhận xét mục tiêu -->
+        <div class="bg-white p-3 border-bottom pb-4">
+            <h6 class="fw-bold text-muted text-uppercase mb-3" style="font-size: 0.85rem;">Kết quả tích lũy</h6>
+            <ul class="nav custom-tabs nav-justified mb-4" id="gradeTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#he10" type="button">Hệ 10</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#he4" type="button">Hệ 4</button></li>
+            </ul>
+
+            <div class="tab-content text-center" id="gradeTabsContent">
+                <!-- SƠ ĐỒ BIỂU ĐỒ TRÒN CHO HỆ 10 -->
+                <div class="tab-pane fade" id="he10">
+                    <svg viewBox="0 0 36 36" class="circular-chart primary">
+                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="circle" stroke-dasharray="{{ (gpa / 10 * 100)|round }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <text x="18" y="19" class="gpa-text">{{ gpa }}</text>
+                        <text x="18" y="24" class="gpa-sub">/ 10.0</text>
+                    </svg>
+                </div>
+
+                <!-- SƠ ĐỒ BIỂU ĐỒ TRÒN CHO HỆ 4 -->
+                <div class="tab-pane fade show active" id="he4">
+                    <svg viewBox="0 0 36 36" class="circular-chart success">
+                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="circle" stroke-dasharray="{{ (gpa_he4 / 4 * 100)|round }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <text x="18" y="19" class="gpa-text">{{ gpa_he4 }}</text>
+                        <text x="18" y="24" class="gpa-sub">/ 4.0</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- TÍNH TOÁN & NHẬN XÉT MỤC TIÊU HỌC TẬP -->
+            <div class="alert mt-4 text-start" style="background-color: #f0f7ff; border: 1px solid #cce5ff; border-radius: 8px;">
+                <h6 class="fw-bold" style="color: var(--neu-blue); font-size: 0.9rem;"><i class="fa-solid fa-bullseye me-2"></i>Mục tiêu học tập</h6>
+                <p class="mb-0 text-dark" style="font-size: 0.85rem;">
+                    {% set gpa_float = gpa_he4 | float %}
+
+                    {% if gpa_float >= 3.6 %}
+                        Tuyệt vời! Bạn đang đạt mức điểm <strong>Xuất sắc</strong>. Hãy tiếp tục giữ vững phong độ này cho đến khi ra trường nhé!
+                    {% elif gpa_float >= 3.2 %}
+                        {% set diff_xs = (3.6 - gpa_float) | round(2) %}
+                        Tuyệt vời, bạn đang ở mức bằng <strong>Giỏi</strong>! Cố lên, bạn chỉ cần kéo thêm <strong class="text-danger">{{ diff_xs }}</strong> điểm nữa là có thể cầm trong tay tấm bằng Xuất sắc (3.6) rồi.
+                    {% elif gpa_float >= 2.5 %}
+                        {% set diff_g = (3.2 - gpa_float) | round(2) %}
+                        Đang ở mức Khá. Cố lên, bạn còn thiếu <strong class="text-danger">{{ diff_g }}</strong> điểm nữa là đạt chuẩn bằng <strong>Giỏi (3.2)</strong>. Cơ hội bứt phá vẫn còn ở các học kỳ sau!
+                    {% elif gpa_float > 0 %}
+                        {% set diff_k = (2.5 - gpa_float) | round(2) %}
+                        Cố lên! Bạn cần thêm <strong class="text-danger">{{ diff_k }}</strong> điểm nữa để lên mức Khá (2.5). Lên kế hoạch học tập cẩn thận hơn cho kỳ tới nhé!
+                    {% else %}
+                        Chưa có đủ dữ liệu điểm để đánh giá. Chúc bạn có một học kỳ thật bùng nổ!
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL THÔNG TIN CHI TIẾT MÔN HỌC (POPUP) -->
+<div class="modal fade" id="classDetailModal" tabindex="-1" aria-labelledby="classDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background-color: var(--neu-blue);">
+                <h5 class="modal-title fw-bold" id="classDetailModalLabel"><i class="fa-solid fa-circle-info me-2"></i>Thông tin chi tiết học phần</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <table class="table table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <td class="text-muted fw-bold align-middle" style="width: 140px;"><i class="fa-solid fa-book me-2"></i>Môn học:</td>
+                            <td class="fw-bold text-primary fs-5" id="modalSubject"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-bold"><i class="fa-solid fa-barcode me-2"></i>Lớp học phần:</td>
+                            <td id="modalSection" class="fw-bold"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-bold"><i class="fa-solid fa-user-tie me-2"></i>Giáo viên:</td>
+                            <td id="modalTeacher"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-bold"><i class="fa-solid fa-location-dot me-2"></i>Phòng học:</td>
+                            <td id="modalRoom" class="fw-bold text-danger"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-bold"><i class="fa-regular fa-clock me-2"></i>Thời gian:</td>
+                            <td id="modalTime"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer bg-light border-top-0">
+                <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var classDetailModal = document.getElementById('classDetailModal');
+        if (classDetailModal) {
+            classDetailModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var subject = button.getAttribute('data-subject');
+                var section = button.getAttribute('data-section');
+                var room = button.getAttribute('data-room');
+                var teacher = button.getAttribute('data-teacher');
+                var time = button.getAttribute('data-time');
+
+                document.getElementById('modalSubject').textContent = subject;
+                document.getElementById('modalSection').textContent = section;
+                document.getElementById('modalRoom').textContent = room;
+                document.getElementById('modalTeacher').textContent = teacher;
+                document.getElementById('modalTime').textContent = time;
+            });
+        }
+    });
+</script>
+{% endblock %}

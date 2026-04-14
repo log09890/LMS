@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Miễn giảm, Trợ cấp & Học bổng{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Miễn giảm, Trợ cấp & Học bổng</li>
+{% endblock %}
+
+{% block head %}
+<style>
+    .policy-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: none;
+    }
+
+    .nav-pills-custom .nav-link {
+        color: #555;
+        font-weight: 600;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-right: 10px;
+        padding: 12px 20px;
+        transition: 0.2s;
+    }
+
+    .nav-pills-custom .nav-link.active {
+        background-color: var(--neu-blue);
+        color: white;
+        border-color: var(--neu-blue);
+        box-shadow: 0 4px 10px rgba(0, 82, 156, 0.2);
+    }
+
+    .table-policy th {
+        background-color: #eef2f9 !important;
+        color: var(--neu-blue) !important;
+        font-weight: 700;
+        vertical-align: middle;
+        padding: 15px;
+    }
+
+    .table-policy td {
+        vertical-align: middle;
+        padding: 15px;
+    }
+
+    .search-box {
+        position: relative;
+        max-width: 400px;
+    }
+
+    .search-box input {
+        padding-left: 40px;
+        border-radius: 20px;
+        border: 1px solid #ced4da;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-hand-holding-dollar me-2"></i> Chính sách Hỗ trợ & Học bổng</h4>
+        <p class="text-muted mb-0">Tra cứu các đối tượng thụ hưởng theo quy định hiện hành</p>
+    </div>
+</div>
+
+<div class="card policy-card">
+    <div class="card-body p-4">
+
+        <!-- Thanh công cụ (Tabs và Thanh tìm kiếm) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <!-- Tabs -->
+            <ul class="nav nav-pills nav-pills-custom" id="policyTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#mien_giam" type="button" role="tab"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Miễn giảm học phí</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tro_cap" type="button" role="tab"><i class="fa-solid fa-hand-holding-heart me-2"></i>Trợ cấp xã hội</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#hoc_bong" type="button" role="tab"><i class="fa-solid fa-medal me-2"></i>Học bổng khuyến khích</button>
+                </li>
+            </ul>
+
+            <!-- Ô tra cứu đối tượng -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="form-control" id="searchInput" placeholder="Tra cứu đối tượng (VD: hộ nghèo, xuất sắc)...">
+            </div>
+        </div>
+
+        <!-- Nội dung các bảng -->
+        <div class="tab-content" id="policyTabsContent">
+
+            <!-- Tab 1: Miễn giảm -->
+            <div class="tab-pane fade show active" id="mien_giam" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-policy table-bordered mb-0" id="tableMienGiam">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">STT</th>
+                                <th width="40%">Đối tượng thụ hưởng</th>
+                                <th width="20%" class="text-center">Mức hỗ trợ</th>
+                                <th width="35%">Điều kiện / Hồ sơ yêu cầu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in policies.mien_giam %}
+                            <tr class="searchable-row">
+                                <td class="text-center text-muted fw-bold">{{ loop.index }}</td>
+                                <td class="fw-bold">{{ item.doi_tuong }}</td>
+                                <td class="text-center fw-bold text-success">{{ item.muc_ho_tro }}</td>
+                                <td>{{ item.dieu_kien }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Trợ cấp -->
+            <div class="tab-pane fade" id="tro_cap" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-policy table-bordered mb-0" id="tableTroCap">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">STT</th>
+                                <th width="40%">Đối tượng thụ hưởng</th>
+                                <th width="20%" class="text-center">Mức hỗ trợ</th>
+                                <th width="35%">Điều kiện / Hồ sơ yêu cầu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in policies.tro_cap %}
+                            <tr class="searchable-row">
+                                <td class="text-center text-muted fw-bold">{{ loop.index }}</td>
+                                <td class="fw-bold">{{ item.doi_tuong }}</td>
+                                <td class="text-center fw-bold text-primary">{{ item.muc_ho_tro }}</td>
+                                <td>{{ item.dieu_kien }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Học bổng -->
+            <div class="tab-pane fade" id="hoc_bong" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover table-policy table-bordered mb-0" id="tableHocBong">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">STT</th>
+                                <th width="40%">Đối tượng thụ hưởng</th>
+                                <th width="20%" class="text-center">Mức hỗ trợ</th>
+                                <th width="35%">Điều kiện Xét duyệt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in policies.hoc_bong %}
+                            <tr class="searchable-row">
+                                <td class="text-center text-muted fw-bold">{{ loop.index }}</td>
+                                <td class="fw-bold">{{ item.doi_tuong }}</td>
+                                <td class="text-center fw-bold text-danger">{{ item.muc_ho_tro }}</td>
+                                <td>{{ item.dieu_kien }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- SCRIPT TÌM KIẾM TRỰC TIẾP -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("searchInput");
+        const rows = document.querySelectorAll(".searchable-row");
+
+        searchInput.addEventListener("keyup", function() {
+            const query = searchInput.value.toLowerCase().trim();
+
+            rows.forEach(row => {
+                const doiTuong = row.cells[1].textContent.toLowerCase();
+                const dieuKien = row.cells[3].textContent.toLowerCase();
+
+                // Nếu từ khóa xuất hiện ở cột Đối tượng hoặc Điều kiện thì giữ lại
+                if (doiTuong.includes(query) || dieuKien.includes(query)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ sơ sinh viên{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Hồ sơ sinh viên</li>
+{% endblock %}
+
+{% block head %}
+<style>
+    .profile-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: none; margin-bottom: 25px; }
+    .profile-header { color: var(--neu-blue); font-weight: bold; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; font-size: 1.05rem; }
+    .form-group-custom { display: flex; margin-bottom: 15px; align-items: center; }
+    .form-group-custom label { width: 140px; color: #555; font-weight: 500; font-size: 0.9rem; margin-bottom: 0; }
+    .form-group-custom .input-group, .form-group-custom > input { flex: 1; }
+    .form-control[readonly] { background-color: #f5f6f8; border: 1px solid #e1e5eb; color: #333; font-weight: 500; font-size: 0.95rem; }
+    .input-group-text.readonly-icon { background-color: #f5f6f8; border: 1px solid #e1e5eb; border-left: none; color: #999; }
+    .avatar-wrapper { width: 110px; height: 150px; background-color: #e9ecef; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; color: #adb5bd; margin: 0 auto 15px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h4 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-address-card me-2"></i> Hồ sơ sinh viên</h4>
+</div>
+
+<div class="row">
+    <!-- Thông tin cá nhân -->
+    <div class="col-lg-6">
+        <div class="card profile-card">
+            <div class="profile-header"><i class="fa-solid fa-user me-2"></i> Thông tin cá nhân</div>
+            <div class="card-body p-4">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-center">
+                        <div class="avatar-wrapper"><i class="fa-solid fa-camera fa-2x"></i></div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="form-group-custom">
+                            <label>Họ và tên</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="{{ student.ten }}" readonly>
+                                <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
+                            </div>
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Ngày sinh</label>
+                            <input type="text" class="form-control" value="01/01/2004" readonly>
+                        </div>
+                        <div class="form-group-custom">
+                            <label>Giới tính</label>
+                            <input type="text" class="form-control" value="{{ student.gioi_tinh | default('Nam') }}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Quê quán</label>
+                    <input type="text" class="form-control" value="{{ student.que_quan | default('Hà Nội') }}" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Số CMND/CCCD</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="001099123456" readonly>
+                        <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Email</label>
+                    <input type="text" class="form-control" value="{{ student.email | default(student.student_id ~ '@st.neu.edu.vn') }}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin học vấn -->
+    <div class="col-lg-6">
+        <div class="card profile-card">
+            <div class="profile-header"><i class="fa-solid fa-graduation-cap me-2"></i> Thông tin học vấn</div>
+            <div class="card-body p-4">
+                <div class="form-group-custom">
+                    <label>Mã sinh viên</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control text-danger fw-bold" value="{{ student.student_id }}" readonly>
+                        <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
+                    </div>
+                </div>
+                <div class="form-group-custom">
+                    <label>Khóa học</label>
+                    <input type="text" class="form-control" value="{{ student.khoa_hoc }}" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Ngành học</label>
+                    <input type="text" class="form-control" value="{{ student.class_info.major_info.ten_nganh if student.class_info else 'N/A' }}" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Lớp hành chính</label>
+                    <input type="text" class="form-control" value="{{ student.class_info.ten_lop if student.class_info else 'N/A' }}" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Trạng thái</label>
+                    <input type="text" class="form-control text-success fw-bold" value="Đang học" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Hệ đào tạo</label>
+                    <input type="text" class="form-control" value="Đại học chính quy" readonly>
+                </div>
+                <div class="form-group-custom">
+                    <label>Cơ sở</label>
+                    <input type="text" class="form-control" value="Cơ sở chính (Trần Đại Nghĩa)" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

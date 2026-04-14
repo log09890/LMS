@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cổng thông tin đào tạo{% endblock %} - NEU</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neu-blue: #004a8e;
+            --neu-red: #b31b1b;
+            --sidebar-width: 270px;
+            --bg-color: #f4f6f9;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
+
+        /* THANH SIDEBAR BÊN TRÁI */
+        .sidebar { width: var(--sidebar-width); height: 100vh; background-color: var(--neu-blue); position: fixed; top: 0; left: 0; z-index: 1050; color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); background-color: rgba(0,0,0,0.1); }
+        .sidebar-header img { width: 75px; filter: brightness(0) invert(1); margin-bottom: 15px; }
+        .sidebar-header h6 { font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; font-size: 1.1rem; }
+        .sidebar-menu { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .sidebar-menu .nav-link { color: rgba(255,255,255,0.7); padding: 14px 25px; display: flex; align-items: center; font-weight: 500; font-size: 0.95rem; border-left: 4px solid transparent; transition: all 0.2s ease; }
+        .sidebar-menu .nav-link i { width: 25px; font-size: 1.1rem; text-align: center; margin-right: 12px; }
+        .sidebar-menu .nav-link:hover, .sidebar-menu .nav-link.active { color: white; background-color: rgba(255,255,255,0.1); border-left-color: var(--neu-red); }
+
+        /* KHU VỰC NỘI DUNG CHÍNH (BÊN PHẢI) */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
+        .top-navbar { background-color: white; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .breadcrumb { margin-bottom: 0; font-size: 0.9rem; font-weight: 500; }
+        .breadcrumb a { color: var(--neu-blue); text-decoration: none; }
+
+        /* User Profile */
+        .header-utils { display: flex; align-items: center; gap: 20px; }
+        .user-profile-btn { display: flex; align-items: center; gap: 10px; color: #333; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: 0.2s; }
+        .user-profile-btn:hover { background-color: #f0f2f5; }
+        .user-avatar { width: 38px; height: 38px; background-color: var(--neu-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .content-wrapper { padding: 30px; flex: 1; }
+        .neu-footer { text-align: center; padding: 15px 0; color: #888; font-size: 0.85rem; margin-top: auto; }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- 1. THANH SIDEBAR BÊN TRÁI -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='img/Logo-NEU.png') }}" alt="NEU Logo">
+            <h6>ĐH KINH TẾ QUỐC DÂN</h6>
+            <small class="opacity-75" style="font-size: 0.75rem;">STUDENT PORTAL</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <a class="nav-link {% if request.endpoint == 'home.index' %}active{% endif %}" href="{{ url_for('home.index') }}">
+                <i class="fa-solid fa-house"></i> Trang chủ
+            </a>
+            <a class="nav-link {% if request.endpoint == 'profile.index' %}active{% endif %}" href="{{ url_for('profile.index') }}">
+                <i class="fa-solid fa-address-card"></i> Hồ sơ sinh viên
+            </a>
+            <a class="nav-link {% if request.endpoint == 'grades.index' %}active{% endif %}" href="{{ url_for('grades.index') }}">
+                <i class="fa-solid fa-chart-pie"></i> Kết quả học tập
+            </a>
+            <a class="nav-link {% if request.endpoint == 'curriculum.index' %}active{% endif %}" href="{{ url_for('curriculum.index') }}">
+                <i class="fa-solid fa-book-open"></i> Chương trình đào tạo
+            </a>
+            <a class="nav-link {% if request.endpoint == 'tuition.index' %}active{% endif %}" href="{{ url_for('tuition.index') }}">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Tra cứu học phí
+            </a>
+
+            <!-- THÊM TAB MIỄN GIẢM, HỌC BỔNG Ở ĐÂY -->
+            <a class="nav-link {% if request.endpoint == 'scholarships.index' %}active{% endif %}" href="{{ url_for('scholarships.index') }}">
+                <i class="fa-solid fa-hand-holding-dollar"></i> Miễn giảm & Học bổng
+            </a>
+
+            <hr class="border-secondary my-3 mx-4">
+
+            <a class="nav-link {% if request.endpoint == 'library.index' %}active{% endif %}" href="{{ url_for('library.index') }}">
+                <i class="fa-solid fa-book-bookmark"></i> Thư viện số NEU
+                <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">BETA</span>
+            </a>
+             <!-- TRỢ LÝ AI -->
+            <a class="nav-link {% if request.endpoint == 'ai_assistant.index' %}active{% endif %}" href="{{ url_for('ai_assistant.index') }}">
+                <i class="fa-solid fa-robot"></i> Trợ lý ảo NEU AI
+                <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">BETA</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="fa-regular fa-bell"></i> Thông báo chung
+            </a>
+            <a class="nav-link text-danger mt-4" href="{{ url_for('auth.logout') }}">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
+    </nav>
+
+    <!-- 2. KHU VỰC NỘI DUNG BÊN PHẢI -->
+    <div class="main-content">
+        <header class="top-navbar">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home.index') }}"><i class="fa-solid fa-home"></i></a></li>
+                    {% block breadcrumb %}{% endblock %}
+                </ol>
+            </nav>
+
+            <div class="header-utils">
+                <i class="fa-regular fa-bell fs-5 text-muted position-relative" style="cursor: pointer;"></i>
+                <div class="dropdown">
+                    <div class="user-profile-btn" data-bs-toggle="dropdown">
+                        <div class="text-end d-none d-md-block">
+                            <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ session.get('user_name', 'Sinh viên') }}</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">{{ session.get('student_id', '') }}</div>
+                        </div>
+                        <div class="user-avatar ms-2"><i class="fa-solid fa-user"></i></div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <li><a class="dropdown-item py-2" href="{{ url_for('profile.index') }}"><i class="fa-regular fa-id-badge me-2 text-muted"></i> Trang cá nhân</a></li>
+                        <li><a class="dropdown-item py-2 text-danger fw-bold" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-wrapper">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="neu-footer">
+            © 2026 Bản quyền thuộc về Đại học Kinh tế Quốc dân
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Tra cứu học phí{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">Tra cứu học phí</li>
+{% endblock %}
+
+{% block head %}
+<style>
+    .tuition-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: none;
+    }
+
+    .tuition-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid var(--neu-blue);
+        padding: 15px 25px;
+        border-radius: 8px 8px 0 0;
+        font-weight: 700;
+        color: var(--neu-blue);
+    }
+
+    .table-tuition th {
+        background-color: var(--neu-blue) !important;
+        color: white !important;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px;
+    }
+
+    .table-tuition td {
+        vertical-align: middle;
+        padding: 12px;
+    }
+
+    .payment-box {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e1effe 100%);
+        border: 1px solid #b8daff;
+        border-radius: 10px;
+        padding: 25px;
+    }
+
+    .btn-pay {
+        background-color: #dc3545;
+        color: white;
+        font-weight: bold;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-pay:hover {
+        background-color: #c82333;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h4 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-file-invoice-dollar me-2"></i> Tra cứu công nợ học phí</h4>
+    <p class="text-muted">Học kỳ 1 - Năm học 2026-2027</p>
+</div>
+
+<!-- KHỐI 1: TỔNG HỢP CÔNG NỢ -->
+<div class="card tuition-card mb-4">
+    <div class="tuition-header d-flex justify-content-between align-items-center">
+        <span><i class="fa-solid fa-wallet me-2"></i> Tổng hợp công nợ</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Học kỳ / Năm học</th>
+                        <th class="text-end">Tổng phải nộp (VNĐ)</th>
+                        <th class="text-end">Đã nộp (VNĐ)</th>
+                        <th class="text-end">Còn nợ (VNĐ)</th>
+                        <th class="text-center">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    {% set no_hoc_phi = invoice.tong_tien - invoice.tien_da_nop %}
+                    <tr>
+                        <td class="ps-4 fw-bold">Học kỳ 1 - 2026-2027</td>
+                        <td class="text-end fw-bold">{{ "{:,.0f}".format(invoice.tong_tien).replace(',', '.') }}</td>
+                        <td class="text-end text-success fw-bold">{{ "{:,.0f}".format(invoice.tien_da_nop).replace(',', '.') }}</td>
+                        <td class="text-end fw-bold fs-5 {% if no_hoc_phi > 0 %}text-danger{% endif %}">
+                            {{ "{:,.0f}".format(no_hoc_phi).replace(',', '.') }}
+                        </td>
+                        <td class="text-center">
+                            {% if no_hoc_phi <= 0 %}
+                                <span class="badge bg-success px-3 py-2"><i class="fa-solid fa-check-circle me-1"></i> Đã hoàn thành</span>
+                            {% elif invoice.tien_da_nop > 0 %}
+                                <span class="badge bg-warning text-dark px-3 py-2"><i class="fa-solid fa-clock me-1"></i> Nộp một phần</span>
+                            {% else %}
+                                <span class="badge bg-danger px-3 py-2"><i class="fa-solid fa-triangle-exclamation me-1"></i> Chưa nộp</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">Hệ thống chưa tạo công nợ cho học kỳ này.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- KHỐI 2: CHI TIẾT TIỀN TỪNG MÔN -->
+    <div class="col-lg-8">
+        <div class="card tuition-card h-100">
+            <div class="tuition-header">
+                <i class="fa-solid fa-list-check me-2"></i> Bảng kê chi tiết học phần đăng ký
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-tuition mb-0">
+                        <thead>
+                            <tr>
+                                <th width="5%">STT</th>
+                                <th width="15%">Mã môn</th>
+                                <th width="35%" class="text-start">Tên môn học</th>
+                                <th width="10%">Số TC</th>
+                                <th width="15%" class="text-end">Đơn giá/TC</th>
+                                <th width="20%" class="text-end">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in tuition_details %}
+                            <tr>
+                                <td class="text-center">{{ loop.index }}</td>
+                                <td class="text-center text-muted">{{ item.ma_mon }}</td>
+                                <td class="fw-bold text-start">{{ item.ten_mon }}</td>
+                                <td class="text-center fw-bold">{{ item.so_tc }}</td>
+                                <td class="text-end text-muted">{{ "{:,.0f}".format(item.don_gia).replace(',', '.') }} ₫</td>
+                                <td class="text-end fw-bold text-primary">{{ "{:,.0f}".format(item.thanh_tien).replace(',', '.') }} ₫</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">Chưa đăng ký học phần nào trong kỳ này.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="5" class="text-end fw-bold">Tổng cộng:</td>
+                                <td class="text-end fw-bold text-danger fs-6">{{ "{:,.0f}".format(tong_tien_chi_tiet).replace(',', '.') }} ₫</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHỐI 3: HƯỚNG DẪN THANH TOÁN (CỔNG E-BILLS) -->
+    <div class="col-lg-4">
+        <div class="payment-box h-100 d-flex flex-column">
+            <h5 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-building-columns me-2"></i>Cổng thanh toán Trực tuyến</h5>
+            <hr class="border-primary opacity-25">
+
+            <p class="text-dark mb-3" style="font-size: 0.95rem; text-align: justify;">
+                Sinh viên có thể nộp học phí trực tuyến thông qua cổng thanh toán liên kết <strong>E-Bills</strong> của nhà trường. Hỗ trợ quét mã QR Code, thanh toán qua thẻ ATM, Visa/Mastercard hoặc ứng dụng Mobile Banking.
+            </p>
+
+            <div class="bg-white p-3 rounded border mb-4">
+                <div class="d-flex justify-content-between mb-2" style="font-size: 0.9rem;">
+                    <span class="text-muted">Mã sinh viên:</span>
+                    <span class="fw-bold">{{ student.student_id }}</span>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size: 0.9rem;">
+                    <span class="text-muted">Họ và tên:</span>
+                    <span class="fw-bold">{{ student.ten }}</span>
+                </div>
+            </div>
+
+            <!-- NÚT CHUYỂN HƯỚNG TỚI EBILLS -->
+            <div class="mt-auto text-center">
+                <a href="https://e-bills.vn/pay/neu" target="_blank" class="btn btn-pay w-100 d-flex align-items-center justify-content-center">
+                    Thanh toán qua E-Bills <i class="fa-solid fa-arrow-up-right-from-square ms-2"></i>
+                </a>
+                <p class="mt-3 mb-0 text-muted" style="font-size: 0.8rem;">
+                    <i class="fa-solid fa-shield-halved me-1"></i> Giao dịch được bảo mật và tự động gạch nợ sau 5 phút.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
