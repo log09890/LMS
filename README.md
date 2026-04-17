@@ -20,7 +20,7 @@ A comprehensive, AI-integrated academic management portal tailored for students 
 
 * Heuristic Recommendations: Automatically suggests textbooks and resources based on the user's current semester enrollment.
 
-* Immersive UI: A modern "Manga Portal" aesthetic featuring horizontal scrollers, trending ranks, and minimalist cover art for missing assets.
+* Immersive UI: A modern aesthetic featuring horizontal scrollers, trending ranks, and minimalist cover art for missing assets.
 
 * Rich Metadata: Interactive modals providing book abstracts, subjects, and direct reading links via the Open Library API.
 
@@ -38,7 +38,7 @@ A comprehensive, AI-integrated academic management portal tailored for students 
 
 * Financial Module: Detailed tuition breakdown, payment history, and E-bill integration.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 | ----- | ----- |
