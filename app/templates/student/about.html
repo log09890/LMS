@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Giới thiệu Dự án{% endblock %}
+
+{% block head %}
+<style>
+    /* MÀU SẮC CHỦ ĐẠO - XANH NEU */
+    :root {
+        --bg-color: #fcfcfd;
+        --text-dark: #111827;
+        --text-muted: #6b7280;
+        --neu-blue: #004a8e;
+        --neu-blue-hover: #003668;
+        --neu-red: #b31b1b;
+        --card-border: #f3f4f6;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* HIỆU ỨNG ÁNH SÁNG MỜ BACKGROUND (ORBS) */
+    .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 0;
+        opacity: 0.4;
+        pointer-events: none;
+    }
+    .orb-1 { top: 5%; left: 5%; width: 400px; height: 400px; background: #cce5ff; }
+    .orb-2 { top: 20%; right: 5%; width: 350px; height: 350px; background: #e6f2ff; }
+    .orb-3 { bottom: 10%; left: 20%; width: 450px; height: 450px; background: #d0f0fd; }
+
+    .about-container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+
+    /* HEADER HERO */
+    .hero-section { text-align: center; margin-bottom: 60px; transition: 0.3s ease; }
+    .hero-icon { font-size: 4.5rem; color: var(--neu-blue); margin-bottom: 20px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .hero-section:hover .hero-icon { transform: scale(1.15) rotate(5deg); color: var(--neu-red); }
+    .hero-title { font-size: 3.2rem; font-weight: 900; color: var(--neu-blue); margin-bottom: 15px; text-transform: uppercase; }
+    .hero-subtitle { font-size: 1.2rem; font-weight: 700; color: var(--neu-red); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+    .hero-desc { color: var(--text-muted); font-size: 1.2rem; line-height: 1.8; max-width: 850px; margin: 0 auto 40px; }
+
+    /* HIỆU ỨNG NÚT LED RGB CẦU VỒNG */
+    .btn-rgb-led {
+        color: white !important;
+        padding: 15px 45px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+        background-size: 1800% 1800%;
+        animation: rainbow-led 4s ease infinite;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-rgb-led:hover {
+        transform: scale(1.05) translateY(-3px);
+        animation: rainbow-led 2s ease infinite;
+        box-shadow: 0 10px 30px rgba(221, 0, 243, 0.4);
+    }
+    @keyframes rainbow-led { 0% { background-position: 0% 82%; } 50% { background-position: 100% 19%; } 100% { background-position: 0% 82%; } }
+
+    /* CARD CHUNG - HIỆU ỨNG HOVER TOÀN DIỆN */
+    .hover-card {
+        background: white; border: 1px solid var(--card-border); border-radius: 16px;
+        box-shadow: 0 6px 30px rgba(0,0,0,0.02); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .hover-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(0, 74, 142, 0.1);
+        border-color: #cce5ff;
+    }
+
+    /* THẺ DEVELOPER */
+    .dev-card { padding: 40px; margin-bottom: 70px; }
+    .dev-card-header { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; margin-bottom: 25px; color: var(--neu-blue); text-transform: uppercase; }
+    .dev-card-header i { color: var(--neu-red); font-size: 1.3rem; }
+    .dev-profile { display: flex; align-items: center; gap: 30px; }
+    .dev-avatar { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #eef2f9; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.4s ease; }
+    .dev-card:hover .dev-avatar { transform: scale(1.05) rotate(3deg); border-color: var(--neu-blue); }
+    .dev-info h4 { font-weight: 900; font-size: 1.8rem; margin-bottom: 10px; color: var(--text-dark); }
+    .dev-info p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+
+    .social-pills { display: flex; gap: 15px; flex-wrap: wrap; }
+    .social-pill {
+        display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border: 1px solid #e5e7eb; border-radius: 10px;
+        font-size: 1rem; font-weight: 700; color: #4b5563; text-decoration: none; transition: 0.3s ease; background: white;
+    }
+    .social-pill:hover { background: var(--neu-blue); border-color: var(--neu-blue); color: white; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,74,142,0.2); }
+
+    .section-title { text-align: center; font-size: 2.2rem; font-weight: 900; color: var(--neu-blue); margin-bottom: 40px; text-transform: uppercase; transition: 0.3s; }
+
+    /* ========================================================
+       LƯỚI TÍNH NĂNG CHÍNH - HIỆU ỨNG GRADIENT HOVER MỚI
+       ======================================================== */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 50px; }
+    .feature-card {
+        background: white; border: 1px solid var(--card-border); border-radius: 16px;
+        padding: 35px 25px; box-shadow: 0 6px 20px rgba(0,0,0,0.02); transition: all 0.4s ease; text-align: left;
+    }
+    .feature-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .feature-icon {
+        width: 48px; height: 48px; background: #eef2f9; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+        color: var(--neu-blue); font-size: 1.3rem; transition: 0.4s ease;
+    }
+    .feature-title { font-weight: 900; font-size: 1.15rem; color: var(--text-dark); margin: 0; transition: 0.4s ease; }
+    .feature-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin: 0; transition: 0.4s ease; }
+
+    /* Hiệu ứng khi Hover vào ô Tính Năng */
+    .feature-card:hover {
+        background: linear-gradient(135deg, #f1e9ff 0%, #e2efff 100%);
+        border-color: #d8b4fe;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15);
+    }
+    .feature-card:hover .feature-icon { background: white; color: #8b5cf6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transform: scale(1.1); }
+    .feature-card:hover .feature-title, .feature-card:hover .feature-desc { color: #374151; }
+
+    /* CÔNG NGHỆ SỬ DỤNG */
+    .tech-card { padding: 40px; margin-bottom: 70px; text-align: center; }
+    .tech-title { font-weight: 900; font-size: 1.6rem; margin-bottom: 15px; color: var(--neu-blue); }
+    .tech-desc { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; }
+    .tech-badges { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+    .tech-badge { background: #f9fafb; border: 1px solid #e5e7eb; color: #374151; font-weight: 700; font-size: 1.05rem; padding: 10px 22px; border-radius: 10px; transition: 0.3s ease; }
+    .tech-badge:hover { background: var(--neu-blue); border-color: var(--neu-blue); color: white; transform: translateY(-4px) scale(1.05); box-shadow: 0 6px 15px rgba(0,74,142,0.2); }
+
+    /* TỔNG QUAN DỰ ÁN */
+    .overview-card { padding: 60px; margin-bottom: 70px; }
+    .overview-header { font-weight: 900; font-size: 1.8rem; margin-bottom: 25px; color: var(--neu-blue); text-transform: uppercase; letter-spacing: 0.5px; }
+    .overview-text { font-size: 1.2rem; color: #4b5563; line-height: 1.9; margin-bottom: 35px; text-align: justify; }
+    .overview-list { list-style: none; padding: 0; margin: 0; }
+    .overview-list li { font-size: 1.15rem; color: #4b5563; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 18px; line-height: 1.7; transition: 0.3s ease; }
+    .overview-list li:hover { transform: translateX(5px); color: var(--neu-blue); }
+    .overview-list li i { color: var(--neu-red); font-size: 1.4rem; margin-top: 3px; }
+
+    /* LIÊN HỆ */
+    .contact-card { padding: 50px; margin-bottom: 60px; text-align: center; }
+    .contact-header { font-weight: 900; font-size: 1.8rem; margin-bottom: 20px; color: var(--neu-blue); text-transform: uppercase; }
+    .contact-text { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 40px; }
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+    .contact-item { background: #f9fafb; border-radius: 12px; padding: 25px; display: flex; flex-direction: column; align-items: center; gap: 15px; border: 1px solid #f3f4f6; text-decoration: none; transition: 0.3s ease; }
+    .contact-item:hover { background: #eef2f9; border-color: var(--neu-blue); transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0,74,142,0.1); }
+    .contact-icon { color: var(--neu-blue); font-size: 2.2rem; margin-bottom: 5px; transition: 0.3s ease; }
+    .contact-item:hover .contact-icon { transform: scale(1.2); }
+    .contact-label { font-weight: 900; font-size: 1.2rem; color: var(--text-dark); }
+    .contact-value { font-size: 1rem; color: var(--text-muted); }
+
+    .footer-credits { text-align: center; font-size: 1.05rem; font-weight: 600; color: #888; padding-bottom: 50px; }
+    .footer-credits i { color: var(--neu-red); transition: 0.3s; }
+    .footer-credits:hover i { transform: scale(1.3); }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+        .features-grid { grid-template-columns: repeat(2, 1fr); }
+        .contact-grid { grid-template-columns: repeat(2, 1fr); }
+        .overview-card { padding: 40px; }
+    }
+    @media (max-width: 768px) {
+        .features-grid { grid-template-columns: 1fr; }
+        .contact-grid { grid-template-columns: 1fr; }
+        .dev-profile { flex-direction: column; text-align: center; }
+        .social-pills { justify-content: center; }
+        .hero-title { font-size: 2.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Background Ánh sáng mờ (Xanh NEU) -->
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
+<div class="about-container">
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <div class="hero-icon"><i class="fa-solid fa-code"></i></div>
+        <h1 class="hero-title">NEU Student Portal</h1>
+        <h3 class="hero-subtitle">Hệ thống thông tin đào tạo tích hợp</h3>
+        <p class="hero-desc">
+            Nền tảng quản lý học vụ, thư viện số và trợ lý ảo thông minh, được thiết kế để
+            mang lại trải nghiệm học tập hiện đại, tối ưu và cá nhân hóa dành riêng cho sinh viên Đại học Kinh tế Quốc dân.
+        </p>
+        <a href="https://github.com/log09890" target="_blank" class="btn-rgb-led">
+            <i class="fa-brands fa-github fs-4"></i> Khám Phá Mã Nguồn
+        </a>
+    </div>
+
+    <!-- THẺ DEVELOPER -->
+    <div class="hover-card dev-card">
+        <div class="dev-card-header"><i class="fa-solid fa-code-branch"></i> Trưởng dự án</div>
+        <div class="dev-profile">
+            <img src="https://ui-avatars.com/api/?name=Tung+Han&background=004a8e&color=fff&size=256" alt="Avatar" class="dev-avatar">
+            <div class="dev-info">
+                <h4>Tùng Hàn</h4>
+                <p>Sinh viên Khoa Môi trường, Biến đổi khí hậu và Đô thị - Trường Quản lý công, Đại học Kinh tế Quốc dân.</p>
+                <div class="social-pills">
+                    <a href="https://github.com/log09890" target="_blank" class="social-pill"><i class="fa-brands fa-github fs-5"></i> GitHub</a>
+                    <a href="https://www.facebook.com/tung.han.5686322" target="_blank" class="social-pill"><i class="fa-brands fa-facebook fs-5" style="color: #1877f2;"></i> Facebook</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TÍNH NĂNG CHÍNH (GIAO DIỆN MỚI CÓ GRADIENT HOVER) -->
+    <h3 class="section-title">Tính Năng Cốt Lõi</h3>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                <h5 class="feature-title">Thư Viện Đa Chiều</h5>
+            </div>
+            <p class="feature-desc">Kho tài liệu điện tử với tính năng gợi ý thông minh dựa trên chuyên ngành, giao diện trực quan phong cách mới.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-robot"></i></div>
+                <h5 class="feature-title">Trợ Lý Ảo NEU AI</h5>
+            </div>
+            <p class="feature-desc">Trí tuệ nhân tạo (Gemini & Ollama) đóng vai trò "Cô giáo ảo" tư vấn lịch học, giải đáp mọi thắc mắc học vụ.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h5 class="feature-title">Quản Lý Điểm Số</h5>
+            </div>
+            <p class="feature-desc">Hệ thống theo dõi kết quả, tự động tính toán GPA hệ 4, hệ 10 và định hướng mục tiêu để đạt học bổng.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h5 class="feature-title">Tra Cứu Học Phí</h5>
+            </div>
+            <p class="feature-desc">Tra cứu công nợ chi tiết từng tín chỉ, kết nối biểu mẫu thanh toán E-bills giúp hoàn thành nghĩa vụ tài chính dễ dàng.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-border-all"></i></div>
+                <h5 class="feature-title">Bảng Điều Khiển</h5>
+            </div>
+            <p class="feature-desc">Giao diện Dashboard tổng quan hiển thị lịch trình tuần, KPIs học tập và thông báo mới nhất cho sinh viên.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-header">
+                <div class="feature-icon"><i class="fa-solid fa-microchip"></i></div>
+                <h5 class="feature-title">Cấu Trúc Tối Ưu</h5>
+            </div>
+            <p class="feature-desc">Kiến trúc MVC Python Flask kết hợp SQLite, thiết kế hướng tới khả năng bảo trì và tốc độ truy xuất siêu nhanh.</p>
+        </div>
+    </div>
+
+    <!-- TỔNG QUAN DỰ ÁN -->
+    <h3 class="section-title">Tổng Quan Dự Án</h3>
+    <div class="hover-card overview-card">
+        <h4 class="overview-header">NEU Student Portal là gì?</h4>
+        <p class="overview-text">
+            <strong>NEU Student Portal</strong> là hệ thống cổng thông tin quản lý đào tạo thế hệ mới được phát triển độc lập nhằm phục vụ và đáp ứng nhu cầu thiết yếu của sinh viên NEU.
+            Thay vì sử dụng nhiều hệ thống rời rạc, dự án này hướng tới việc tích hợp toàn bộ các nghiệp vụ gồm theo dõi điểm số, tra cứu chương trình đào tạo, thanh toán công nợ và truy cập thư viện số vào trong một giao diện duy nhất, liền mạch và hiện đại.
+        </p>
+
+        <h4 class="overview-header mt-5">Những Lợi Ích Vượt Trội</h4>
+        <ul class="overview-list mt-3">
+            <li><i class="fa-solid fa-circle-check"></i> Tạo ra một môi trường tra cứu thông tin tập trung, giảm thiểu thao tác dư thừa khi phải di chuyển giữa các website khác nhau.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Tổ chức lịch trình học tập khoa học, kiểm soát biểu đồ điểm số và cảnh báo tài chính hoàn toàn tự động.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Tích hợp công nghệ Trợ lý AI túc trực 24/7 giúp sinh viên tiết kiệm thời gian tìm kiếm thông tin quy chế rườm rà.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Cung cấp kho tài liệu học tập phong phú, đáp ứng nhu cầu nghiên cứu chuyên sâu đa lĩnh vực.</li>
+        </ul>
+    </div>
+
+    <!-- CÔNG NGHỆ SỬ DỤNG (ĐÃ SỬA TEXT NHƯ YÊU CẦU) -->
+    <div class="hover-card tech-card">
+        <h4 class="tech-title">Công Nghệ Sử Dụng</h4>
+        <p class="tech-desc">Được xây dựng với các công nghệ hiện đại để đạt hiệu suất tối ưu và trải nghiệm phát triển tốt nhất.</p>
+        <div class="tech-badges">
+            <span class="tech-badge">Python 3.10+</span>
+            <span class="tech-badge">Flask Framework</span>
+            <span class="tech-badge">SQLAlchemy ORM</span>
+            <span class="tech-badge">SQLite Database</span>
+            <span class="tech-badge">Bootstrap 5 UI</span>
+            <span class="tech-badge">JavaScript (ES6)</span>
+            <span class="tech-badge">Google Gemini AI</span>
+            <span class="tech-badge">Ollama Llama-3</span>
+            <span class="tech-badge">Open Library API</span>
+        </div>
+    </div>
+
+    <!-- LIÊN HỆ -->
+    <div class="hover-card contact-card">
+        <h4 class="contact-header">Kết nối cùng chúng tôi</h4>
+        <p class="contact-text">Nếu bạn có câu hỏi, đề xuất tính năng hoặc muốn đóng góp mã nguồn, hãy kết nối ngay!</p>
+        <div class="contact-grid">
+            <a href="mailto:tunghan@student.neu.edu.vn" class="contact-item">
+                <i class="fa-regular fa-envelope contact-icon"></i>
+                <span class="contact-label">Email Học Tập</span>
+                <span class="contact-value">Liên hệ qua Mail</span>
+            </a>
+            <a href="https://github.com/log09890" target="_blank" class="contact-item">
+                <i class="fa-brands fa-github contact-icon" style="color: #333;"></i>
+                <span class="contact-label">GitHub Profile</span>
+                <span class="contact-value">github.com/log09890</span>
+            </a>
+            <a href="https://www.facebook.com/tung.han.5686322" target="_blank" class="contact-item">
+                <i class="fa-brands fa-facebook contact-icon" style="color: #1877f2;"></i>
+                <span class="contact-label">Facebook Cá Nhân</span>
+                <span class="contact-value">Tùng Hàn</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-credits">
+        Được thiết kế với <i class="fa-solid fa-heart mx-1"></i> bởi Tùng Hàn - Trường Quản lý công, Đại học Kinh tế Quốc dân.
+    </div>
+
+</div>
+{% endblock %}

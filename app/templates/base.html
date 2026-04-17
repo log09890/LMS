@@ -18,30 +18,82 @@
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
 
-        /* THANH SIDEBAR BÊN TRÁI */
+        /* THANH SIDEBAR BÊN TRÁI - NGUYÊN BẢN CỦA BẠN */
         .sidebar { width: var(--sidebar-width); height: 100vh; background-color: var(--neu-blue); position: fixed; top: 0; left: 0; z-index: 1050; color: white; box-shadow: 4px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         .sidebar-header { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); background-color: rgba(0,0,0,0.1); }
         .sidebar-header img { width: 75px; filter: brightness(0) invert(1); margin-bottom: 15px; }
         .sidebar-header h6 { font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; font-size: 1.1rem; }
         .sidebar-menu { flex: 1; padding: 20px 0; overflow-y: auto; }
-        .sidebar-menu .nav-link { color: rgba(255,255,255,0.7); padding: 14px 25px; display: flex; align-items: center; font-weight: 500; font-size: 0.95rem; border-left: 4px solid transparent; transition: all 0.2s ease; }
+        .sidebar-menu .nav-link { color: rgba(255,255,255,0.7); padding: 14px 25px; display: flex; align-items: center; font-weight: 500; font-size: 0.95rem; border-left: 4px solid transparent; transition: all 0.2s ease; text-decoration: none; }
         .sidebar-menu .nav-link i { width: 25px; font-size: 1.1rem; text-align: center; margin-right: 12px; }
         .sidebar-menu .nav-link:hover, .sidebar-menu .nav-link.active { color: white; background-color: rgba(255,255,255,0.1); border-left-color: var(--neu-red); }
 
-        /* KHU VỰC NỘI DUNG CHÍNH (BÊN PHẢI) */
-        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
+        /* KHU VỰC NỘI DUNG CHÍNH (BÊN PHẢI) - ĐÃ KHÓA CỨNG MARGIN VÀ WIDTH ĐỂ KHÔNG BỊ ĐÈ */
+        .main-content { margin-left: 270px !important; width: calc(100% - 270px) !important; min-height: 100vh; display: flex; flex-direction: column; }
         .top-navbar { background-color: white; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .breadcrumb { margin-bottom: 0; font-size: 0.9rem; font-weight: 500; }
         .breadcrumb a { color: var(--neu-blue); text-decoration: none; }
 
-        /* User Profile */
+        /* ĐOẠN CSS BỔ SUNG ĐỂ FIX LỖI HIỂN THỊ HEADER BÊN PHẢI */
         .header-utils { display: flex; align-items: center; gap: 20px; }
-        .user-profile-btn { display: flex; align-items: center; gap: 10px; color: #333; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: 0.2s; }
-        .user-profile-btn:hover { background-color: #f0f2f5; }
-        .user-avatar { width: 38px; height: 38px; background-color: var(--neu-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .content-wrapper { padding: 30px; flex: 1; }
-        .neu-footer { text-align: center; padding: 15px 0; color: #888; font-size: 0.85rem; margin-top: auto; }
+        /* Đã thêm white-space: nowrap để tên và avatar không bị rớt dòng */
+        .user-profile-btn { display: flex; align-items: center; cursor: pointer; padding: 5px 10px; border-radius: 30px; transition: 0.2s; background: transparent; border: 1px solid transparent; white-space: nowrap; }
+        .user-profile-btn:hover { background: #f8f9fa; border-color: #e9ecef; }
+        .user-avatar { width: 40px; height: 40px; background-color: var(--neu-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; }
+        .user-profile-btn .text-end { line-height: 1.2; margin-right: 5px; }
+
+        /* FIX LỖI FOOTER LƠ LỬNG */
+        .content-wrapper { flex: 1; padding: 25px; } /* flex: 1 giúp đẩy footer xuống đáy */
+        .neu-footer { background-color: white; text-align: center; padding: 15px; color: #666; font-size: 0.85rem; margin-top: auto; border-top: 1px solid #e1e5eb; }
+
+        /* HIỆU ỨNG RGB CHO NÚT EASTER EGG GIẤU KÍN */
+        .easter-egg-btn {
+            opacity: 0.15; /* Làm mờ gần như tàng hình */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: #888 !important;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .easter-egg-btn i {
+            margin-right: 5px;
+        }
+
+        .easter-egg-btn:hover {
+            opacity: 1; /* Rõ nét và phát sáng khi hover */
+            color: white !important;
+            background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+            background-size: 1800% 1800%;
+            animation: rainbow-led 2s ease infinite;
+            box-shadow: 0 0 15px rgba(221, 0, 243, 0.5);
+            transform: scale(1.15) translateY(-3px);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* THÊM HIỆU ỨNG KHI BẤM VÀO NÚT BÍ MẬT NÀY */
+        .easter-egg-btn:active {
+            transform: scale(0.9) translateY(0);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 1), inset 0 0 20px rgba(255,255,255,0.8);
+            filter: brightness(1.5);
+            transition: 0.1s;
+        }
+
+        @keyframes rainbow-led {
+            0% { background-position: 0% 82%; }
+            50% { background-position: 100% 19%; }
+            100% { background-position: 0% 82%; }
+        }
     </style>
+
+    {% block extra_css %}{% endblock %}
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -70,8 +122,6 @@
             <a class="nav-link {% if request.endpoint == 'tuition.index' %}active{% endif %}" href="{{ url_for('tuition.index') }}">
                 <i class="fa-solid fa-file-invoice-dollar"></i> Tra cứu học phí
             </a>
-
-            <!-- THÊM TAB MIỄN GIẢM, HỌC BỔNG Ở ĐÂY -->
             <a class="nav-link {% if request.endpoint == 'scholarships.index' %}active{% endif %}" href="{{ url_for('scholarships.index') }}">
                 <i class="fa-solid fa-hand-holding-dollar"></i> Miễn giảm & Học bổng
             </a>
@@ -82,7 +132,6 @@
                 <i class="fa-solid fa-book-bookmark"></i> Thư viện số NEU
                 <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">BETA</span>
             </a>
-             <!-- TRỢ LÝ AI -->
             <a class="nav-link {% if request.endpoint == 'ai_assistant.index' %}active{% endif %}" href="{{ url_for('ai_assistant.index') }}">
                 <i class="fa-solid fa-robot"></i> Trợ lý ảo NEU AI
                 <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">BETA</span>
@@ -93,6 +142,13 @@
             <a class="nav-link text-danger mt-4" href="{{ url_for('auth.logout') }}">
                 <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
             </a>
+
+            <!-- margin-top: auto giúp đẩy nút này xuống tít dưới đáy Sidebar -->
+            <div style="margin-top: auto; padding-top: 50px; padding-bottom: 15px; display: flex; justify-content: center;">
+                <a class="easter-egg-btn" href="{{ url_for('home.about') }}" title="Secrets">
+                    <i class="fa-solid fa-code"></i> bấm vào
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -123,8 +179,8 @@
                 </div>
             </div>
         </header>
-
-        <main class="content-wrapper">
+        <!-- Dynamic Content wrapper -->
+        <main class="content-wrapper {% block content_class %}{% endblock %}">
             {% block content %}{% endblock %}
         </main>
 

@@ -8,105 +8,138 @@
 
 {% block head %}
 <style>
-    .profile-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: none; margin-bottom: 25px; }
-    .profile-header { color: var(--neu-blue); font-weight: bold; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; font-size: 1.05rem; }
-    .form-group-custom { display: flex; margin-bottom: 15px; align-items: center; }
-    .form-group-custom label { width: 140px; color: #555; font-weight: 500; font-size: 0.9rem; margin-bottom: 0; }
-    .form-group-custom .input-group, .form-group-custom > input { flex: 1; }
-    .form-control[readonly] { background-color: #f5f6f8; border: 1px solid #e1e5eb; color: #333; font-weight: 500; font-size: 0.95rem; }
-    .input-group-text.readonly-icon { background-color: #f5f6f8; border: 1px solid #e1e5eb; border-left: none; color: #999; }
-    .avatar-wrapper { width: 110px; height: 150px; background-color: #e9ecef; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; color: #adb5bd; margin: 0 auto 15px; }
+    :root { --neu-blue: #004a8e; --neu-red: #b31b1b; }
+    .profile-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: none; margin-bottom: 25px; overflow: hidden; }
+    .profile-header { background: #f8f9fa; color: var(--neu-blue); font-weight: bold; padding: 18px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .info-row { display: flex; padding: 12px 0; border-bottom: 1px dashed #f0f0f0; align-items: center; }
+    .info-label { width: 150px; color: #666; font-size: 0.9rem; font-weight: 500; }
+    .info-value { flex: 1; color: #333; font-weight: 600; }
+    .avatar-box { width: 120px; height: 160px; background: #eef2f6; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #adb5bd; }
+    .btn-neu { background: var(--neu-blue); color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; transition: 0.3s; }
+    .btn-neu:hover { background: #003668; transform: translateY(-2px); color: white; }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h4 class="fw-bold" style="color: var(--neu-blue);"><i class="fa-solid fa-address-card me-2"></i> Hồ sơ sinh viên</h4>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: var(--neu-blue);"><i class="fa-solid fa-address-card me-2"></i> Hồ sơ sinh viên</h4>
+    <div class="d-flex gap-2">
+        <button class="btn btn-neu" data-bs-toggle="modal" data-bs-target="#editModal">
+            <i class="fa-solid fa-user-pen me-2"></i> Chỉnh sửa hồ sơ
+        </button>
+        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="fa-solid fa-trash-can me-2"></i> Xóa tài khoản
+        </button>
+    </div>
 </div>
 
+<!-- THÔNG BÁO FLASH -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <div class="row">
-    <!-- Thông tin cá nhân -->
-    <div class="col-lg-6">
-        <div class="card profile-card">
-            <div class="profile-header"><i class="fa-solid fa-user me-2"></i> Thông tin cá nhân</div>
-            <div class="card-body p-4">
-                <div class="row mb-3">
-                    <div class="col-sm-4 text-center">
-                        <div class="avatar-wrapper"><i class="fa-solid fa-camera fa-2x"></i></div>
-                    </div>
-                    <div class="col-sm-8">
-                        <div class="form-group-custom">
-                            <label>Họ và tên</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" value="{{ student.ten }}" readonly>
-                                <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
-                            </div>
-                        </div>
-                        <div class="form-group-custom">
-                            <label>Ngày sinh</label>
-                            <input type="text" class="form-control" value="01/01/2004" readonly>
-                        </div>
-                        <div class="form-group-custom">
-                            <label>Giới tính</label>
-                            <input type="text" class="form-control" value="{{ student.gioi_tinh | default('Nam') }}" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group-custom">
-                    <label>Quê quán</label>
-                    <input type="text" class="form-control" value="{{ student.que_quan | default('Hà Nội') }}" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Số CMND/CCCD</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="001099123456" readonly>
-                        <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
-                    </div>
-                </div>
-                <div class="form-group-custom">
-                    <label>Email</label>
-                    <input type="text" class="form-control" value="{{ student.email | default(student.student_id ~ '@st.neu.edu.vn') }}" readonly>
-                </div>
+    <div class="col-lg-4">
+        <div class="card profile-card text-center p-4">
+            <div class="avatar-box"><i class="fa-solid fa-user-graduate fa-4x"></i></div>
+            <h5 class="fw-bold text-dark mb-1">{{ student.ten }}</h5>
+            <p class="text-muted mb-3">{{ student.student_id }}</p>
+            <div class="badge bg-success p-2 px-3 mb-3">Đang học</div>
+            <hr>
+            <div class="text-start mt-2" style="font-size: 0.9rem;">
+                <div class="mb-2"><i class="fa-solid fa-envelope me-2 text-muted"></i> {{ student.email }}</div>
+                <div class="mb-2"><i class="fa-solid fa-phone me-2 text-muted"></i> {{ student.sdt or 'Chưa cập nhật' }}</div>
+                <div><i class="fa-solid fa-location-dot me-2 text-muted"></i> {{ student.dia_chi or 'Chưa cập nhật' }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Thông tin học vấn -->
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <div class="card profile-card">
-            <div class="profile-header"><i class="fa-solid fa-graduation-cap me-2"></i> Thông tin học vấn</div>
+            <div class="profile-header"><i class="fa-solid fa-graduation-cap me-2"></i> Thông tin đào tạo</div>
             <div class="card-body p-4">
-                <div class="form-group-custom">
-                    <label>Mã sinh viên</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control text-danger fw-bold" value="{{ student.student_id }}" readonly>
-                        <span class="input-group-text readonly-icon"><i class="fa-solid fa-lock"></i></span>
+                <div class="info-row"><div class="info-label">Ngành học</div><div class="info-value">{{ student.class_info.major_info.ten_nganh if student.class_info else 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label">Lớp hành chính</div><div class="info-value">{{ student.class_info.ten_lop if student.class_info else 'N/A' }}</div></div>
+                <div class="info-row"><div class="info-label">Khóa học</div><div class="info-value">K{{ student.khoa_hoc }}</div></div>
+                <div class="info-row"><div class="info-label">Giới tính</div><div class="info-value">{{ student.gioi_tinh or 'Nam' }}</div></div>
+                <div class="info-row"><div class="info-label">Quê quán</div><div class="info-value">{{ student.que_quan or 'Chưa cập nhật' }}</div></div>
+                <div class="info-row" style="border:none;"><div class="info-label">Hệ đào tạo</div><div class="info-value">Đại học Chính quy</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CHỈNH SỬA -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content shadow" action="{{ url_for('profile.update_profile') }}" method="POST">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold text-primary">Cập nhật hồ sơ sinh viên</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Họ và tên</label>
+                        <input type="text" name="ten" class="form-control" value="{{ student.ten }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ student.email }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Giới tính</label>
+                        <select name="gioi_tinh" class="form-select">
+                            <option value="Nam" {% if student.gioi_tinh == 'Nam' %}selected{% endif %}>Nam</option>
+                            <option value="Nữ" {% if student.gioi_tinh == 'Nữ' %}selected{% endif %}>Nữ</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Số điện thoại</label>
+                        <input type="text" name="sdt" class="form-control" value="{{ student.sdt }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Quê quán</label>
+                        <input type="text" name="que_quan" class="form-control" value="{{ student.que_quan }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Địa chỉ hiện tại</label>
+                        <textarea name="dia_chi" class="form-control" rows="2">{{ student.dia_chi }}</textarea>
                     </div>
                 </div>
-                <div class="form-group-custom">
-                    <label>Khóa học</label>
-                    <input type="text" class="form-control" value="{{ student.khoa_hoc }}" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Ngành học</label>
-                    <input type="text" class="form-control" value="{{ student.class_info.major_info.ten_nganh if student.class_info else 'N/A' }}" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Lớp hành chính</label>
-                    <input type="text" class="form-control" value="{{ student.class_info.ten_lop if student.class_info else 'N/A' }}" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Trạng thái</label>
-                    <input type="text" class="form-control text-success fw-bold" value="Đang học" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Hệ đào tạo</label>
-                    <input type="text" class="form-control" value="Đại học chính quy" readonly>
-                </div>
-                <div class="form-group-custom">
-                    <label>Cơ sở</label>
-                    <input type="text" class="form-control" value="Cơ sở chính (Trần Đại Nghĩa)" readonly>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="submit" class="btn btn-neu">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL XÓA -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-danger">Xác nhận xóa tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fa-solid fa-triangle-exclamation text-warning fa-3x mb-3"></i>
+                <p>Hành động này sẽ xóa vĩnh viễn thông tin của bạn khỏi hệ thống.<br><strong>Bạn có chắc chắn muốn tiếp tục không?</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quay lại</button>
+                <form action="{{ url_for('profile.delete_profile') }}" method="POST">
+                    <button type="submit" class="btn btn-danger px-4">Xóa ngay</button>
+                </form>
             </div>
         </div>
     </div>

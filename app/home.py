@@ -42,3 +42,7 @@ def index():
                            student=student, schedules=schedules,
                            gpa=gpa, gpa_he4=round(gpa / 10 * 4, 2),
                            tong_tin_chi=tong_tc, tuition=tuition)
+@home_bp.route('/about')
+def about():
+    # Trang giới thiệu tác giả và dự án
+    return render_template('student/about.html')
