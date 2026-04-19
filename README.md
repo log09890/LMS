@@ -1,127 +1,105 @@
-# NEU Intelligent Student Hub
+NEU Student Portal - Cổng Thông Tin Sinh Viên 
 
+Dự án xây dựng hệ thống quản lý và tra cứu thông tin sinh viên dành cho sinh viên Đại học Kinh tế Quốc dân (NEU). Hệ thống được tích hợp các công nghệ hiện đại như Trợ lý ảo AI và Thư viện số thông minh.
 
+ Tính năng nổi bật
 
+1. Dashboard 
 
+Hiển thị thông tin cá nhân dưới dạng thẻ sinh viên số.
 
-A comprehensive, AI-integrated academic management portal tailored for students at the National Economics University (NEU). This platform streamlines academic workflows, financial tracking, and digital resource discovery through a modern, user-centric interface.
+Thống kê nhanh KPI học tập: GPA tích lũy, Số tín chỉ, Tình trạng học phí.
 
-## Key Features
+Thời khóa biểu tuần trực quan và danh sách thông báo mới nhất.
 
-### Next-Gen Dashboard
+2. Thư viện số 
 
-* Digital Student ID: Secure, personalized identification card with QR integration.
+Giao diện tra cứu sách được thiết kế theo phong cách cổng truyện hiện đại.
 
-* Real-time Analytics: Instant visualization of Cumulative GPA, Earned Credits, and Tuition status.
+Tính năng cá nhân hóa: Tự động đề xuất giáo trình và tài liệu dựa trên các môn học sinh viên đang đăng ký trong kỳ.
 
-* Dynamic Scheduling: Automated weekly timetable synchronized with enrollment data.
+Thông tin chi tiết: Pop-up hiển thị mô tả, chủ đề và bìa sách tối giản (Minimalist Cover) cho các đầu sách thiếu ảnh.
 
-### Digital Library (Personalized)
+Tích hợp dữ liệu từ Open Library API.
 
-* Heuristic Recommendations: Automatically suggests textbooks and resources based on the user's current semester enrollment.
+3. Trợ lý ảo NEU AI
 
-* Immersive UI: A modern aesthetic featuring horizontal scrollers, trending ranks, and minimalist cover art for missing assets.
+Hỗ trợ giải đáp quy chế, tư vấn lộ trình học tập và tính toán điểm mục tiêu.
 
-* Rich Metadata: Interactive modals providing book abstracts, subjects, and direct reading links via the Open Library API.
+Chế độ linh hoạt: Hỗ trợ cả Gemini API (Cloud) và Ollama (Local AI - Llama3/Mistral).
 
-### Intelligent AI Assistant
+4. Quản lý Đào tạo & Tài chính
 
-* Hybrid Deployment: Supports both Google Gemini Pro (Cloud) and Ollama (Local Llama3/Mistral) for privacy and performance.
+Bảng điểm: Theo dõi kết quả học tập chi tiết qua từng kỳ.
 
-* Academic Counseling: Specialized in academic regulations, credit calculation, and goal-setting (GPA planning).
+Chương trình đào tạo: Tra cứu lộ trình các môn học dự kiến theo ngành.
 
-### Academic & Financial Ecosystem
+Học phí: Quản lý hóa đơn, chi tiết học phần và tích hợp thanh toán E-bills.
 
-* Grade Management: Historical academic performance tracking with 4.0/0.0 scale conversion.
+ Công nghệ sử dụng
 
-* Curriculum Mapping: Progress tracking against the official major requirements.
+Backend: Python (Flask)
 
-* Financial Module: Detailed tuition breakdown, payment history, and E-bill integration.
+Database: SQLAlchemy (SQLite) - Thiết kế chuẩn theo ERD quan hệ.
 
-## Tech Stack
+Frontend: Jinja2, Bootstrap 5, FontAwesome, JavaScript (ES6+).
 
-| Layer | Technologies |
-| ----- | ----- |
-| Backend | Python 3.0+, Flask (Modular Blueprint Architecture) |
-| Database | SQLAlchemy ORM, SQLite (Production-ready Schema) |
-| Frontend | Bootstrap 5, Jinja2 Templates, JavaScript (ES6+), FontAwesome |
-| AI/ML | Google Generative AI API, Ollama (Local LLM) |
-| Deployment | Gunicorn (WSGI), Render / PythonAnywhere / Ngrok |
+AI Integration: Google Gemini API / Ollama Service.
 
-## Project Architecture
+Deployment: Render, Gunicorn.
 
-```
-neu_management/
+ Cấu trúc dự án
+
 ├── app/
-│   ├── templates/          # Jinja2 HTML Templates
-│   ├── static/             # Assets (CSS, JS, Images)
-│   ├── models.py           # Database Schema & ORM Classes
-│   ├── auth.py             # Authentication & Session Management
-│   ├── home.py             # Dashboard Logic
-│   ├── library.py          # Digital Library Module & API Integration
-│   └── ai_assistant.py     # AI Logic (Gemini/Ollama)
-├── db/
-│   └── DBwebSv.db          # SQLite Database File
-├── run.py                  # Application Entry Point
-├── requirements.txt        # Dependency Manifest
-└── Procfile                # WSGI Server Configuration
+│   ├── templates/          # Giao diện HTML (Jinja2)
+│   ├── static/             # CSS, JS, Hình ảnh
+│   ├── models.py           # Định nghĩa cấu trúc Database (ERD)
+│   ├── auth.py             # Xử lý đăng nhập/đăng ký
+│   ├── home.py             # Logic Dashboard chính
+│   ├── ai_assistant.py     # Module Trợ lý AI
+│   └── library.py          # Module Thư viện số
+├── DBwebSv.db              # File cơ sở dữ liệu SQLite
+├── run.py                  # File khởi chạy ứng dụng
+├── requirements.txt        # Danh sách thư viện cần thiết
+└── Procfile                # Cấu hình triển khai Render
 
-```
 
-## Quick Start
+Hướng dẫn cài đặt
 
-### . Installation
+Clone dự án:
 
-```
-# Clone the repository
-git clone https://github.com/log09890/LMS.git
-cd LMS
+git clone [https://github.com/yourusername/neu-student-portal.git](https://github.com/yourusername/neu-student-portal.git)
+cd neu-student-portal
 
-# Setup virtual environment
+
+Cài đặt môi trường ảo & Thư viện:
+
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
 
-```
 
-### 2. Configuration
+Cấu hình AI (Tùy chọn):
 
-* To use Cloud AI: Obtain a Gemini API Key from Google AI Studio.
+Để dùng AI Local: Cài đặt Ollama và chạy ollama run llama3.
 
-* Update app/ai_assistant.py with your key and set USE_LOCAL_AI = False.
+Để dùng Cloud: Đăng ký API Key
 
-### 3. Execution
+Chạy ứng dụng:
 
-```
 python run.py
 
-```
 
-The application will be accessible at http://localhost:5000.
+Truy cập: https://lms-ua01.onrender.com
 
-## Deployment
+Triển khai (Deployment)
 
-### PythonAnywhere (Recommended for SQLite)
+Dự án được tối ưu hóa để triển khai trên Render hoặc PythonAnywhere.
 
-Clone & Setup: Use the Bash console to clone and create a virtualenv.
+Build Command: pip install -r requirements.txt
 
-WSGI Config: Point the WSGI file to /home/yourusername/LMS/run.py.
+Start Command: gunicorn run:app
 
-Static Mapping: Map /static/ to /home/yourusername/LMS/app/static/.
+Bản quyền
 
-### Ngrok (For Live Demonstrations)
-
-Run the local server and expose it via:
-
-```
-ngrok http 5000
-
-```
-
-## License
-
-Distributed under the MIT License.
-
-Developed for Academic Excellence at NEU.
+© 2026 Dự án thuộc về Sinh viên Đại học Kinh tế Quốc dân.

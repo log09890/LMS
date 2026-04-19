@@ -4,103 +4,100 @@
 
 {% block head %}
 <style>
-    :root { --neu-blue: #004a8e; --neu-bg: #f0f4f8; }
+    :root { --neu-blue: #004a8e; --neu-bg: #f4f7f9; }
     .content-wrapper { padding: 0 !important; overflow: hidden; }
     .ai-layout { display: flex; height: calc(100vh - 70px); background: #fff; }
 
     /* SIDEBAR */
-    .chat-sidebar-sub { width: 280px; background: #f8f9fa; border-right: 1px solid #dee2e6; display: flex; flex-direction: column; padding: 15px; }
-    .new-chat-btn { background: var(--neu-blue); color: white; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 20px; transition: 0.2s; border: none; width: 100%; }
+    .chat-sidebar { width: 280px; background: #f8f9fa; border-right: 1px solid #dee2e6; display: flex; flex-direction: column; padding: 15px; }
+    .new-chat-btn { background: var(--neu-blue); color: white; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 20px; border: none; width: 100%; transition: 0.2s; }
     .new-chat-btn:hover { background: #003668; transform: translateY(-2px); }
 
     .session-item-wrap { position: relative; margin-bottom: 4px; }
-    .session-link { display: block; padding: 12px 45px 12px 12px; border-radius: 8px; color: #444; text-decoration: none; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; }
+    .session-link { display: block; padding: 12px 45px 12px 12px; border-radius: 8px; color: #444; text-decoration: none; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .session-link.active { background: #e7f0f7; color: var(--neu-blue); font-weight: 700; border-left: 4px solid var(--neu-blue); }
-    .session-link:hover:not(.active) { background: #eee; }
 
-    .btn-delete-sess { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #bbb; border: none; background: none; padding: 5px; opacity: 0; transition: 0.2s; }
-    .session-item-wrap:hover .btn-delete-sess { opacity: 1; }
-    .btn-delete-sess:hover { color: #dc3545; }
+    .btn-delete { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #ccc; border: none; background: none; opacity: 0; transition: 0.2s; }
+    .session-item-wrap:hover .btn-delete { opacity: 1; }
+    .btn-delete:hover { color: #dc3545; }
 
-    /* CHAT MAIN */
-    .chat-main-area { flex: 1; display: flex; flex-direction: column; background: #fff; }
-    .chat-header-bar { padding: 12px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #fff; }
-    .chat-scroll-win { flex: 1; overflow-y: auto; padding: 30px 18%; scroll-behavior: smooth; }
+    /* CHAT AREA */
+    .chat-main { flex: 1; display: flex; flex-direction: column; background: #fff; }
+    .chat-header { padding: 12px 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .chat-scroll { flex: 1; overflow-y: auto; padding: 30px 18%; scroll-behavior: smooth; }
 
     /* SUGGESTIONS */
-    .suggestion-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; width: 100%; max-width: 650px; }
-    .suggestion-card { background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; text-align: left; font-size: 0.85rem; color: #555; display: flex; align-items: center; }
-    .suggestion-card:hover { border-color: var(--neu-blue); background: #f4f8fb; color: var(--neu-blue); }
-    .suggestion-card i { color: var(--neu-blue); margin-right: 12px; font-size: 1.1rem; }
+    .suggest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .suggest-card { background: white; border: 1px solid #e0e0e0; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; color: #555; display: flex; align-items: center; }
+    .suggest-card:hover { border-color: var(--neu-blue); background: #f0f7ff; color: var(--neu-blue); }
+    .suggest-card i { color: var(--neu-blue); margin-right: 12px; }
 
     /* BUBBLES */
     .msg-row { display: flex; margin-bottom: 25px; width: 100%; }
     .msg-row.user { justify-content: flex-end; }
-    .bubble { max-width: 85%; padding: 14px 20px; border-radius: 18px; font-size: 0.95rem; line-height: 1.6; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .bubble { max-width: 85%; padding: 14px 20px; border-radius: 18px; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
     .user .bubble { background: var(--neu-blue); color: white; border-bottom-right-radius: 2px; }
     .ai .bubble { background: #f8f9fa; color: #333; border: 1px solid #eee; border-bottom-left-radius: 2px; }
 
-    .chat-input-area { padding: 25px 18%; border-top: 1px solid #eee; background: #fff; }
-    .input-box-neu { display: flex; background: #f1f3f5; border-radius: 20px; padding: 6px 20px; align-items: center; border: 1px solid transparent; transition: 0.3s; }
-    .input-box-neu:focus-within { background: #fff; border-color: var(--neu-blue); box-shadow: 0 0 0 3px rgba(0,74,142,0.1); }
-    .input-box-neu input { flex: 1; border: none; background: none; padding: 10px; outline: none; font-size: 1rem; }
-    .input-box-neu button { border: none; background: var(--neu-blue); color: white; width: 40px; height: 40px; border-radius: 50%; transition: 0.2s; }
-    .input-box-neu button:hover { transform: scale(1.1); }
+    .chat-input-area { padding: 25px 18%; border-top: 1px solid #eee; }
+    .input-box-neu { display: flex; background: #f1f3f5; border-radius: 25px; padding: 6px 20px; align-items: center; }
+    .input-box-neu input { flex: 1; border: none; background: none; padding: 10px; outline: none; }
+    .input-box-neu button { border: none; background: var(--neu-blue); color: white; width: 40px; height: 40px; border-radius: 50%; }
 
-    @media (max-width: 992px) { .chat-sidebar-sub { display: none; } .chat-scroll-win, .chat-input-area { padding-left: 5%; padding-right: 5%; } .suggestion-container { grid-template-columns: 1fr; } }
+    @media (max-width: 992px) { .chat-sidebar { display: none; } .chat-scroll, .chat-input-area { padding-left: 5%; padding-right: 5%; } .suggest-grid { grid-template-columns: 1fr; } }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="ai-layout">
-    <aside class="chat-sidebar-sub d-none d-md-flex">
-        <button class="new-chat-btn" onclick="startNew()">
-            <i class="fas fa-plus me-2"></i>Cuộc hội thoại mới
+    <aside class="chat-sidebar d-none d-md-flex">
+        <button class="new-chat-btn" onclick="window.location.href='/ai-assistant/'">
+            <i class="fas fa-plus me-2"></i> Hội thoại mới
         </button>
         <div class="session-list overflow-auto" id="sidebarList">
-            <small class="text-muted d-block mb-3 fw-bold px-2">NHẬT KÝ TRÒ CHUYỆN</small>
+            <small class="text-muted d-block mb-3 fw-bold px-2">LỊCH SỬ TRÒ CHUYỆN</small>
             {% for s in all_sessions %}
-            <div class="session-item-wrap" id="sess-wrap-{{ s.id }}">
+            <div class="session-item-wrap" id="sess-{{ s.id }}">
                 <a href="{{ url_for('ai_assistant.index', session_id=s.id) }}" id="link-{{ s.id }}" class="session-link {% if active_session and active_session.id == s.id %}active{% endif %}">
                     <i class="far fa-comment-dots me-2"></i> {{ s.title }}
                 </a>
-                <button class="btn-delete-sess" onclick="deleteSess(event, {{ s.id }})"><i class="fas fa-trash-alt"></i></button>
+                <button class="btn-delete" onclick="deleteChat(event, {{ s.id }})"><i class="fas fa-trash-alt"></i></button>
             </div>
             {% endfor %}
         </div>
     </aside>
 
-    <main class="chat-main-area">
-        <header class="chat-header-bar">
+    <main class="chat-main">
+        <header class="chat-header">
             <div class="d-flex align-items-center">
-                <span class="badge bg-danger me-2">Cô giáo AI NEU</span>
-                <h6 class="mb-0 fw-bold" style="color: var(--neu-blue);">Trợ lý ảo học vụ</h6>
+                <span class="badge bg-danger me-2 shadow-sm">Cô giáo AI NEU</span>
+                <h6 class="mb-0 fw-bold" style="color: var(--neu-blue);">Hỗ trợ học vụ</h6>
             </div>
             <select id="modelPref" class="form-select form-select-sm w-auto rounded-pill border-0 shadow-sm bg-light">
-                <option value="gemini">Google Gemini 1.5</option>
+                <option value="gemini">Google Gemini 2.5 Flash</option>
                 <option value="local">Ollama Local</option>
             </select>
         </header>
 
-        <div class="chat-scroll-win" id="chatWin">
+        <div class="chat-scroll" id="chatWin">
             {% if not current_messages %}
                 <div class="text-center mt-4" id="welcomeBox">
                     <img src="{{ url_for('static', filename='img/Logo-NEU.png') }}" width="100" class="mb-3">
                     <h4 class="fw-bold">Chào em, {{ student.ten }}!</h4>
-                    <p class="text-muted">Cô luôn sẵn lòng lắng nghe và hỗ trợ em các vấn đề học tập.</p>
+                    <p class="text-muted">Cô luôn sẵn lòng giải đáp mọi thắc mắc học tập của em.</p>
 
-                    <div class="suggestion-container mx-auto">
-                        <div class="suggestion-card" onclick="sendSuggest('Kể cho Cô nghe về ngành học của em đi')">
-                            <i class="fas fa-university"></i> Ngành học của em?
+                    <div class="suggest-grid">
+                        <div class="suggest-card" onclick="askSuggest('Cách tính điểm GPA tích lũy của trường mình?')">
+                            <i class="fas fa-calculator"></i> Cách tính GPA?
                         </div>
-                        <div class="suggestion-card" onclick="sendSuggest('Cô ơi xem giúp em tình hình học phí kỳ này')">
+                        <div class="suggest-card" onclick="askSuggest('Cô xem giúp em tình hình học phí kỳ này')">
                             <i class="fas fa-money-check-alt"></i> Học phí của em?
                         </div>
-                        <div class="suggestion-card" onclick="sendSuggest('Cách để em cải thiện GPA trong kỳ tới?')">
-                            <i class="fas fa-graduation-cap"></i> Cải thiện GPA?
+                        <div class="suggest-card" onclick="askSuggest('Làm sao để nhận được học bổng khuyến khích?')">
+                            <i class="fas fa-medal"></i> Nhận học bổng?
                         </div>
-                        <div class="suggestion-card" onclick="sendSuggest('Em muốn hỏi về quy định đăng ký học phần')">
-                            <i class="fas fa-info-circle"></i> Quy định đăng ký học phần?
+                        <div class="suggest-card" onclick="askSuggest('Kể cho Cô nghe về ngành học của em đi')">
+                            <i class="fas fa-university"></i> Ngành học của em?
                         </div>
                     </div>
                 </div>
@@ -111,12 +108,12 @@
                 </div>
                 {% endfor %}
             {% endif %}
-            <div id="loading" class="msg-row ai" style="display: none;"><div class="bubble shadow-sm"><i class="fas fa-pen-nib fa-spin me-2"></i>Cô đang viết lời nhắn cho em...</div></div>
+            <div id="loading" class="msg-row ai" style="display: none;"><div class="bubble shadow-sm"><i class="fas fa-pen-nib fa-spin me-2"></i>AI đang phản hồi cho bạn...</div></div>
         </div>
 
         <div class="chat-input-area">
             <form id="chatForm" class="input-box-neu shadow-sm" action="javascript:void(0);">
-                <input type="text" id="userInput" placeholder="Nhập câu hỏi cho Cô nhé..." autocomplete="off">
+                <input type="text" id="userInput" placeholder="Em muốn hỏi Cô điều gì..." autocomplete="off">
                 <button type="submit"><i class="fas fa-paper-plane"></i></button>
             </form>
         </div>
@@ -135,19 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const scroll = () => { chatWin.scrollTop = chatWin.scrollHeight; };
     scroll();
 
-    window.startNew = () => window.location.href = '/ai-assistant/';
-
-    window.sendSuggest = (text) => {
+    window.askSuggest = (text) => {
         userInput.value = text;
         chatForm.dispatchEvent(new Event('submit'));
     };
 
-    window.deleteSess = async (e, id) => {
+    window.deleteChat = async (e, id) => {
         e.preventDefault(); e.stopPropagation();
-        if(confirm("Bạn có chắc chắn muốn xóa đoạn chat này không?")) {
+        if(confirm("Bạn có chắc muốn xóa vĩnh viễn đoạn chat này không?")) {
             const r = await fetch(`/ai-assistant/delete/${id}`, {method: 'POST'});
             if(r.ok) {
-                document.getElementById(`sess-wrap-${id}`).remove();
+                document.getElementById(`sess-${id}`).remove();
                 if(activeSessId === id) window.location.href = '/ai-assistant/';
             }
         }
@@ -170,11 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch("{{ url_for('ai_assistant.chat') }}", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    message: text,
-                    session_id: activeSessId,
-                    model_preference: document.getElementById('modelPref').value
-                })
+                body: JSON.stringify({ message: text, session_id: activeSessId, model_preference: document.getElementById('modelPref').value })
             });
             const data = await res.json();
 
@@ -185,22 +176,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const wrap = document.createElement('div');
                 wrap.className = "session-item-wrap";
-                wrap.id = `sess-wrap-${data.session_id}`;
+                wrap.id = `sess-${data.session_id}`;
                 wrap.innerHTML = `
                     <a href="${newUrl}" class="session-link active">
                         <i class="far fa-comment-dots me-2"></i> ${data.new_title || text.substring(0,20)}
                     </a>
-                    <button class="btn-delete-sess" onclick="deleteSess(event, ${data.session_id})"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn-delete" onclick="deleteChat(event, ${data.session_id})"><i class="fas fa-trash-alt"></i></button>
                 `;
                 const titleTag = sidebarList.querySelector('small');
                 sidebarList.insertBefore(wrap, titleTag ? titleTag.nextSibling : sidebarList.firstChild);
+            } else if(data.new_title) {
+                const link = document.getElementById("link-" + activeSessId);
+                if(link) link.innerHTML = `<i class="far fa-comment-dots me-2"></i> ${data.new_title}`;
             }
 
             loading.style.display = 'none';
             appendMsg('ai', data.reply);
         } catch (err) {
             loading.style.display = 'none';
-            appendMsg('ai', 'Cô bị lỗi kết nối rồi em ạ.');
+            appendMsg('ai', 'lỗi kết nối máy chủ.');
         }
         scroll();
     };
